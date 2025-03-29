@@ -3,7 +3,11 @@ const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 exports.getLogin = (req, res) => {
-  res.render("login");
+  res.render("login", {
+    title: "Login",
+    user: req.user,
+    error: "",
+  });
 };
 
 exports.login = async (req, res, next) => {
@@ -14,7 +18,7 @@ exports.login = async (req, res, next) => {
     if (!user) {
       return res.render("login", {
         title: "Login",
-        user: req.username,
+        user: req.user,
         error: info.message,
       });
     }
@@ -29,7 +33,11 @@ exports.login = async (req, res, next) => {
 };
 
 exports.getRegister = (req, res) => {
-  res.render("register");
+  res.render("register", {
+    title: "Register",
+    user: req.user,
+    error: "",
+  });
 };
 
 exports.register = async (req, res) => {
@@ -39,7 +47,7 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res.render("register", {
         title: "Register",
-        user: req.username,
+        user: req.user,
         error: "User already exists",
       });
     }
@@ -55,8 +63,18 @@ exports.register = async (req, res) => {
   } catch (error) {
     res.render("register", {
       title: "Register",
-      user: req.username,
+      user: req.user,
       error: error.message,
     });
   }
+};
+
+//Logout
+exports.logout = (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/auth/login");
+  });
 };
