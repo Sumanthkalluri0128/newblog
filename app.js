@@ -7,6 +7,10 @@ const passportConfig = require("./config/passport");
 const userRoutes = require("./routes/authRoutes");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const methodOverride = require("method-override");
+const postRoutes = require("./routes/postRoutes");
+const errorHandler = require("./middlewares/errorHandler");
+const commentRoutes = require("./routes/commentRoutes");
 
 //port
 const PORT = process.env.PORT || 3000;
@@ -23,6 +27,9 @@ app.use(
     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL }),
   })
 );
+
+//method override middleware
+app.use(methodOverride("_method"));
 
 //passport
 passportConfig(passport);
@@ -41,6 +48,10 @@ app.get("/", (req, res) => {
 });
 //Routes
 app.use("/auth", userRoutes);
+app.use("/posts", postRoutes);
+app.use("/", commentRoutes);
+//error handler
+app.use(errorHandler);
 
 //start server
 mongoose
