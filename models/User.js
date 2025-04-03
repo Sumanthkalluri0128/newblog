@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { url } = require("../config/cloudinary");
 
 //schema
 const userSchema = new mongoose.Schema(
@@ -18,13 +19,14 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     profilePicture: {
-      type: String,
+      type: Object,
       public_id: String,
+      url: String,
     },
     bio: {
       type: String,
     },
-    post: [
+    posts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Post",
@@ -42,4 +44,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

@@ -11,7 +11,6 @@ const postSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      trim: true,
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
@@ -42,4 +41,6 @@ const postSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Post", postSchema);
+const Post = mongoose.model("Post", postSchema);
+
+module.exports = Post;

@@ -1,15 +1,17 @@
 const bcrypt = require("bcryptjs");
-const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
+const User = require("../models/User");
 const passport = require("passport");
+//Render login page
 exports.getLogin = asyncHandler((req, res) => {
   res.render("login", {
     title: "Login",
-    user: req.user,
     error: "",
+    user: req.user,
   });
 });
 
+// Login logic
 exports.login = asyncHandler(async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -26,11 +28,11 @@ exports.login = asyncHandler(async (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.redirect("/");
+      return res.redirect("/user/profile");
     });
-    console.log(err, user, info);
   })(req, res, next);
 });
+//Get register page
 exports.getRegister = asyncHandler((req, res) => {
   res.render("register", {
     title: "Register",
@@ -39,10 +41,12 @@ exports.getRegister = asyncHandler((req, res) => {
   });
 });
 
+//Register logic
 exports.register = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
+
     if (existingUser) {
       return res.render("register", {
         title: "Register",
@@ -52,7 +56,7 @@ exports.register = asyncHandler(async (req, res) => {
     }
     //hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    //save USER
+    //save user
     const user = await User.create({
       username,
       email,
@@ -67,7 +71,6 @@ exports.register = asyncHandler(async (req, res) => {
     });
   }
 });
-
 //Logout
 exports.logout = asyncHandler((req, res) => {
   req.logout((err) => {

@@ -1,13 +1,12 @@
-//add comment
-
 const asyncHandler = require("express-async-handler");
 const Comment = require("../models/Comment");
 const Post = require("../models/Post");
 
+//add comment
 exports.addComment = asyncHandler(async (req, res) => {
   const { content } = req.body;
   const postId = req.params.id;
-  //find the post;
+  //find the post
   const post = await Post.findById(postId);
   //validation
   if (!post) {
@@ -28,6 +27,7 @@ exports.addComment = asyncHandler(async (req, res) => {
       success: "",
     });
   }
+  //save comment
   const comment = new Comment({
     content,
     post: postId,
@@ -45,7 +45,15 @@ exports.addComment = asyncHandler(async (req, res) => {
 //get comment form
 exports.getCommentForm = asyncHandler(async (req, res) => {
   const comment = await Comment.findById(req.params.id);
-
+  if (!comment) {
+    return res.render("postDetails", {
+      title: "Post",
+      comment,
+      user: req.user,
+      error: "Post not found",
+      success: "",
+    });
+  }
   res.render("editComment", {
     title: "Comment",
     comment,
@@ -64,7 +72,7 @@ exports.updateComment = asyncHandler(async (req, res) => {
       title: "Post",
       comment,
       user: req.user,
-      error: "comment not found",
+      error: "Comment not found",
       success: "",
     });
   }
@@ -73,7 +81,7 @@ exports.updateComment = asyncHandler(async (req, res) => {
       title: "Post",
       comment,
       user: req.user,
-      error: "Your are not authorized to update this comment",
+      error: "You are not authorized to edit this comment",
       success: "",
     });
   }
@@ -90,7 +98,7 @@ exports.deleteComment = asyncHandler(async (req, res) => {
       title: "Post",
       comment,
       user: req.user,
-      error: "comment not found",
+      error: "Comment not found",
       success: "",
     });
   }
@@ -99,7 +107,7 @@ exports.deleteComment = asyncHandler(async (req, res) => {
       title: "Post",
       comment,
       user: req.user,
-      error: "Your are not authorized to update this comment",
+      error: "You are not authorized to delete this comment",
       success: "",
     });
   }
